@@ -1,0 +1,49 @@
+html, body {
+	height:100%;
+	width:100%;
+	padding:0;
+	margin:0;
+}
+.add-button {
+	position: absolute;
+	top:1px;
+	right:230px;
+	background:#2C3E50;
+	border: 0;
+	color: white;
+	height:35px;
+	border-radius:3px;
+	width:157px;
+}
+a {
+	font-weight: bold;
+	text-decoration:none;
+	color:#140f07;
+}
+.btn {
+	background-color:lightgrey;
+}
+
+#calendar-container {
+	height:100%;
+	width:100%;
+}
+
+#modiMemo {
+	width:400px;
+}
+
+#datePicker {
+	width:400px;
+}
+#menu_wrap{
+	height:50px;
+}
+
+#userNone {
+	color:red;
+}
+
+h8{
+	color:grey;
+}

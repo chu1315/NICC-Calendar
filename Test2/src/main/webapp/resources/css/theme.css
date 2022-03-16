@@ -1,0 +1,15 @@
+
+.dropdown-menu {
+	padding: 1.3125rem;
+}
+
+.card-subtitle {
+    display: block;
+    color: #8c98a4;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03125rem;
+    margin-top: 0;
+    margin-bottom: .5rem;
+    font-size:80%;
+}

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.test.IndexMapper">
+	<select id="calendar" parameterType="String" resultType="LogInfoVO">
+		SELECT userPk, userId, userPw
+		FROM logInfo
+		WHERE userId = #{userId}
+	</select>
+
+	<insert id="goPop" parameterType="CalendarVO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO calendar_test
+		(title, start, color, end, content, chkSuccess, undefinedChk, author, team)
+		VALUES
+		(#{title}, #{start}, #{color}, #{end}, #{content}, #{chkSuccess}, #{undefinedChk}, #{author}, #{team})
+		
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<update id="updateCal" parameterType="CalendarVO">
+		UPDATE calendar_test 
+		SET title = #{title}, content = #{content}, color = #{color}, start = #{start}, end = #{end}, chkSuccess = #{chkSuccess}, undefinedChk = #{undefinedChk}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="pastCal" parameterType="String" resultType="CalendarVO">
+		SELECT calendar_test.id, title, START, color, END, chkSuccess, author,
+		GROUP_CONCAT(c_user.nm ORDER BY c_user.id ASC) nm
+		FROM calendar_test JOIN chkuser LEFT JOIN c_user
+		ON chkuser.c_user_id = c_user.id
+		WHERE calendar_test.id = chkuser.calendar_id AND START <![CDATA[<= #{today}]]> AND chkSuccess LIKE 'N' AND undefinedChk LIKE 'N' OR undefinedChk IS NULL
+		GROUP BY calendar_test.id
+		ORDER BY start
+	</select>
+	
+	<insert id="chkUserIn" parameterType="chkUserVO">
+		INSERT INTO chkUser
+		(calendar_id, c_user_id)
+		VALUES
+		(#{calendar_id}, #{c_user_id})
+	</insert>
+	
+	<delete id="delCheck" parameterType="int">
+		DELETE FROM chkUser
+		WHERE calendar_id = #{id}
+	</delete>
+	
+	<select id="modiChk" parameterType="int" resultType="chkUserVO">
+		SELECT c_user_id
+		FROM chkUser
+		WHERE calendar_id = #{id}
+	</select>
+	
+<!-- 	<select id="getId" parameterType="CalendarVO" resultType="int"> -->
+<!-- 		SELECT id -->
+<!-- 		FROM calendar_test -->
+<!-- 		WHERE title=#{title} AND start=#{start} AND color=#{color} AND end=#{end} AND content = #{content} -->
+<!-- 	</select> -->
+	
+	<select id="showUser" resultType="UserVO">
+		SELECT id, nm
+		FROM c_user
+	</select>
+	
+	<select id="author" resultType="CalendarVO">
+		SELECT author
+		FROM calendar_test
+		WHERE id=#{id}
+	</select>
+	
+	<select id="event" resultType="CalendarVO">
+		SELECT calendar_test.id, title, START, color, END, chkSuccess, team, author,
+		GROUP_CONCAT(c_user.nm ORDER BY c_user.id ASC) nm, undefinedChk, content
+		FROM calendar_test JOIN chkuser LEFT JOIN c_user
+		ON chkuser.c_user_id = c_user.id
+		WHERE calendar_test.id = chkuser.calendar_id AND undefinedChk LIKE 'N' OR undefinedChk IS NULL
+		GROUP BY calendar_test.id
+		ORDER BY start
+	</select>
+	
+	<select id="eventTwo" resultType="CalendarVO" parameterType="ArrayList">
+		SELECT calendar_test.id, title, START, color, END, chkSuccess, team, author,
+		GROUP_CONCAT(c_user.nm ORDER BY c_user.id ASC) nm, undefinedChk, content
+		FROM calendar_test JOIN chkuser LEFT JOIN c_user
+		ON chkuser.c_user_id = c_user.id
+		WHERE calendar_test.id = chkuser.calendar_id AND (undefinedChk LIKE 'N' OR undefinedChk IS NULL)  AND team IN
+		<foreach collection="list" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+		GROUP BY calendar_test.id
+		ORDER BY start
+	</select>
+	
+	<select id="getNm" resultType="CalendarVO">
+		SELECT title
+		FROM calendar_test
+		WHERE id = #{id}
+	</select>
+	
+	
+	<select id="idPop" parameterType="int" resultType="CalendarVO">
+		SELECT id, title
+		FROM calendar_test
+		WHERE id = #{id}
+	</select>
+	
+	
+	<select id="latlong" parameterType="CalendarVO" resultType="CalendarVO">
+		SELECT id, content, color, start, end, chkSuccess, title, undefinedChk, author, team
+		FROM calendar_test
+		WHERE id = #{id}
+	</select>
+	
+	<update id="modi" parameterType="CalendarVO">
+		UPDATE calendar_test 
+		SET title = #{title}, content = #{content}, color = #{color}, start = #{start}, end = #{end}, chkSuccess = #{chkSuccess}, undefinedChk = #{undefinedChk}, author = #{author}, team=#{team}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="del" parameterType="CalendarVO">
+		DELETE FROM calendar_test
+		WHERE id = #{id}
+	</delete>
+	
+	<select id="undefinedInsertView" resultType="CalendarVO">
+		SELECT id, title, content
+		FROM calendar_test
+		WHERE undefinedChk like 'Y'
+		ORDER BY id desc
+	</select>
+	
+	<update id="changePw" parameterType="LogInfoVO">
+		UPDATE logInfo
+		SET userPw = #{userPw}
+		WHERE userId = #{userId}
+	</update>
+	
+	<select id="getUserMap" parameterType="LogInfoVO" resultType="map">
+		SELECT *
+		FROM loginfo LEFT OUTER JOIN c_user 
+		ON loginfo.log_user = c_user.id
+		WHERE loginfo.userId = #{userId}
+	</select>
+	
+</mapper>
